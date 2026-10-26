@@ -9,9 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Crissy Lifts">
 <meta name="description" content="Crissy's training log: glutes, back &amp; arms and legs days with cardio, weigh-ins and research-backed progression advice.">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23140d11'/%3E%3Crect x='10' y='24' width='8' height='16' rx='2' fill='%23ff6fae'/%3E%3Crect x='46' y='24' width='8' height='16' rx='2' fill='%23ff6fae'/%3E%3Crect x='18' y='29' width='28' height='6' rx='3' fill='%23fcf0f5'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23140d11'/%3E%3Crect x='10' y='24' width='8' height='16' rx='2' fill='%23ff6fae'/%3E%3Crect x='46' y='24' width='8' height='16' rx='2' fill='%23ff6fae'/%3E%3Crect x='18' y='29' width='28' height='6' rx='3' fill='%23fcf0f5'/%3E%3C/svg%3E">
 </head>
 <body>
 <title>Crissy Lifts</title>
@@ -23,7 +22,7 @@
   --line:#33222b; --line-2:#48303c;
   --ink:#fcf0f5; --ink-2:#d7bccb; --ink-3:#9c7f8d; --ink-4:#624b57;
   --pink:#ff6fae; --pink-2:#ff9cc6; --pink-deep:#d8428a; --label:#c98aa8;
-  --glutes:#ff6fae; --upper:#c3a1ff; --legs:#ffab8f; --full:#ffd27a; --cardio:#6fd8cf;
+  --glutes:#ff6fae; --upper:#c3a1ff; --legs:#ffab8f; --full:#ffd27a; --abs:#ffd27a; --cardio:#6fd8cf;
   --ok:#57d6a0; --warn:#ffc36b; --bad:#ff5f6d; --hold:#b8a3b1; --info:#a9b8ff;
   --body:#271b22; --muscle:#35262f; --muscle-line:#4a3440; --hair:#46303b;
   --radius:18px;
@@ -127,6 +126,10 @@ a{color:var(--pink-2)}
 [data-type=upper]{--type:var(--upper)}
 [data-type=legs]{--type:var(--legs)}
 [data-type=full]{--type:var(--full)}
+[data-type=abs]{--type:var(--abs)}
+[data-type=past]{--type:var(--ink-2)}
+.minicount{font:800 11px/1 var(--font-body);color:var(--type);background:color-mix(in srgb,var(--type) 16%,transparent);padding:2px 6px;border-radius:999px;vertical-align:2px;margin-left:2px}
+.also.absadd .tiny{color:var(--abs)}
 [data-type=cardio]{--type:var(--cardio)}
 [data-type=weight]{--type:var(--pink-2)}
 
@@ -267,7 +270,7 @@ input[type=number]{-moz-appearance:textfield}
 .holdbtn svg{width:15px;height:15px}
 .setrir{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:center;margin-top:-2px}
 .sethead.wide,.set.wide{grid-template-columns:44px 1fr 40px}
-.lvlrow{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:center;padding:0 14px 10px}
+.lvlrow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:0 14px 10px}
 .lvlrow .lbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
 .stepper.lvl{border-color:color-mix(in srgb,var(--pink) 40%,var(--line-2))}
 .stepper.lvl .lvlname{display:grid;place-items:center;text-align:center;font-weight:700;font-size:14px;line-height:1.1;color:var(--pink-2);padding:0 4px;min-width:0}
@@ -479,7 +482,7 @@ table.rpe td:first-child{font-family:var(--font-display);font-size:18px;font-wei
   .starter .t{font-size:21px;margin-top:10px}
   .starter .d,.starter.mini .d{display:none}
   .set,.sethead{grid-template-columns:34px 1fr 1fr 38px;gap:6px}
-  .setrir,.lvlrow{grid-template-columns:34px 1fr;gap:6px}
+  .setrir{grid-template-columns:34px 1fr;gap:6px}
   .lvlrow{padding:0 10px 10px}
   .sethead.wide,.set.wide{grid-template-columns:34px 1fr 38px}
   .stepper{grid-template-columns:30px 1fr 30px}
@@ -558,14 +561,16 @@ const MUSCLES = {
 };
 
 const DAY_TYPES = {
-  glutes: { name: 'Glutes',      letter: 'G',  color: 'var(--glutes)', lifting: true,  desc: 'Thrusts · kickbacks · split squats' },
-  upper:  { name: 'Back & Arms', letter: 'BA', color: 'var(--upper)',  lifting: true,  desc: 'Back · arms · chest · abs' },
-  legs:   { name: 'Legs',        letter: 'L',  color: 'var(--legs)',   lifting: true,  desc: 'Quads · hamstrings · inner thighs' },
-  full:   { name: 'Full body',   letter: 'F',  color: 'var(--full)',   lifting: true,  desc: 'Bonus 4th day' },
+  glutes: { name: 'Glutes',      letter: 'G',  color: 'var(--glutes)', lifting: true,  desc: 'Thrusts · abduction · kickbacks · RDL' },
+  upper:  { name: 'Back & Arms', letter: 'BA', color: 'var(--upper)',  lifting: true,  desc: 'Pulldowns · rows · push & pull-ups' },
+  legs:   { name: 'Legs',        letter: 'L',  color: 'var(--legs)',   lifting: true,  desc: 'Split squats · press · curls · extensions' },
+  abs:    { name: 'Abs',         letter: 'A',  color: 'var(--abs)',    lifting: true,  addon: true, desc: '1–2× a week · pick 2–3' },
   cardio: { name: 'Cardio',      letter: 'C',  color: 'var(--cardio)', lifting: false, desc: 'Cardio & stretch only' },
+  // retired with the October 2026 plan — kept only so sessions logged before it still display
+  full:   { name: 'Full body',   letter: 'F',  color: 'var(--full)',   lifting: true,  retired: true, desc: 'Retired' },
 };
 const ROTATION = ['glutes', 'upper', 'legs'];
-const PLAN_DAYS = ['glutes', 'upper', 'legs', 'full'];
+const PLAN_DAYS = ['glutes', 'upper', 'legs', 'abs'];
 
 /* Exercises. weight = working weight in kg (0 = not set yet — she fills it in on the first session).
    step = smallest jump the machine / dumbbells allow. mode:
@@ -573,43 +578,58 @@ const PLAN_DAYS = ['glutes', 'upper', 'legs', 'full'];
      bodyweight reps, with optional added kg (dumbbells, a plate)
      assisted   assisted-machine counterweight — LESS assistance is harder
      timed      seconds held (plank)
-   levels = a ladder of versions for moves with no weight to add (knees → full push-ups); the app treats
-   each rung like a weight step. tip = how to level up otherwise. demo = starting load for sample data only. */
+   sets = sets per session (default 3). amrap = every set is "as many as possible": she levels up
+   once EVERY set reaches the top of the range. levels = a ladder of versions for moves with no
+   weight to add; the app treats each rung like a weight step. demo = sample-data starting load. */
 const DEFAULT_EXERCISES = [
   // Glutes
-  { id: 'hip-thrust',            name: 'Hip Thrust',              day: 'glutes', weight: 0, step: 5,   compound: true,  primary: ['glutes'],                     secondary: ['hamstrings', 'adductors'], demo: 40 },
+  { id: 'hip-thrust',            name: 'Hip Thrust',              day: 'glutes', weight: 0, step: 5,   compound: true, target: 10, top: 12, floor: 8, primary: ['glutes'], secondary: ['hamstrings', 'adductors'], demo: 40 },
   { id: 'hip-abduction',         name: 'Hip Abduction',           day: 'glutes', weight: 0, step: 5,   target: 12, top: 15, floor: 10, primary: ['abductors', 'glutes'], secondary: [], alts: ['hip-adduction'], demo: 30 },
   { id: 'glute-kickback',        name: 'Glute Kickback',          day: 'glutes', weight: 0, step: 2.5, perSide: true, target: 12, top: 15, floor: 10, primary: ['glutes'], secondary: ['hamstrings'], demo: 10 },
+  { id: 'rdl',                   name: 'Romanian Deadlift (RDL)', day: 'glutes', weight: 0, step: 2.5, compound: true, target: 10, top: 12, floor: 8, primary: ['hamstrings', 'glutes'], secondary: ['lowerBack', 'forearms'], demo: 20 },
+  // Legs
+  { id: 'ffe-split-squat',       name: 'Front-Foot-Elevated Split Squat', day: 'legs', mode: 'bodyweight', weight: 0, step: 2, perHand: true, perSide: true, compound: true, target: 10, top: 12, floor: 8, primary: ['quads', 'glutes'], secondary: ['adductors', 'hamstrings'], tip: 'hold a dumbbell in each hand', demo: 0 },
+  { id: 'leg-press',             name: 'Leg Press',               day: 'legs', weight: 0, step: 5, compound: true, target: 10, top: 12, floor: 8, primary: ['quads', 'glutes'], secondary: ['hamstrings', 'adductors'], demo: 60 },
+  { id: 'leg-curl',              name: 'Leg Curl',                day: 'legs', weight: 0, step: 5, target: 10, top: 12, floor: 8, primary: ['hamstrings'], secondary: ['calves'], demo: 25 },
+  { id: 'leg-extension',         name: 'Leg Extension',           day: 'legs', weight: 0, step: 5, target: 10, top: 12, floor: 8, primary: ['quads'], secondary: [], demo: 25 },
+  // Back & arms
+  { id: 'lat-pulldown',          name: 'Lat Pulldown',            day: 'upper', weight: 0, step: 5, compound: true, sets: 2, target: 10, top: 12, floor: 8, primary: ['lats'], secondary: ['biceps', 'upperBack', 'rearDelts'], demo: 30 },
+  { id: 'seated-row',            name: 'Seated Row',              day: 'upper', weight: 0, step: 5, compound: true, sets: 2, target: 10, top: 12, floor: 8, primary: ['lats', 'upperBack'], secondary: ['biceps', 'rearDelts'], alts: ['t-bar-row'], demo: 30 },
+  { id: 'push-up',               name: 'Push-Up',                 day: 'upper', mode: 'bodyweight', weight: 1, step: 0, compound: true, amrap: true, target: 8, top: 12, floor: 5, primary: ['chest', 'triceps'], secondary: ['frontDelts', 'abs'], levels: ['Incline (hands on bench)', 'On knees', 'Full push-up', 'Full, 3-s lowering', 'Feet raised'], demo: 1 },
+  { id: 'pull-up',               name: 'Pull-Up',                 day: 'upper', mode: 'assisted', weight: 0, step: 5, compound: true, target: 10, top: 12, floor: 6, primary: ['lats'], secondary: ['biceps', 'upperBack', 'forearms'], demo: 35 },
+  { id: 'face-pull',             name: 'Face Pull',               day: 'upper', weight: 0, step: 2.5, target: 8, top: 10, floor: 6, primary: ['rearDelts', 'upperBack'], secondary: ['traps', 'sideDelts'], demo: 10 },
+  // Abs — her note: pick 2–3, 3 sets each, 1–2× a week; add weight or slow the reps once easy
+  { id: 'plank',                 name: 'Plank',                   day: 'abs', mode: 'timed', weight: 1, step: 0, amrap: true, target: 40, top: 60, floor: 20, primary: ['abs'], secondary: ['obliques', 'frontDelts', 'glutes'], levels: ['On knees', 'Full plank', 'With shoulder taps', 'Plate on back'], demo: 1 },
+  { id: 'in-and-out',            name: 'Seated In & Out',         day: 'abs', mode: 'bodyweight', weight: 0, step: 0, target: 12, top: 15, floor: 8, primary: ['abs'], secondary: ['obliques'], levels: ['Hands on floor', 'Hands off floor', 'Slow 3-s tempo', 'Holding a light weight'], demo: 0 },
+  { id: 'leg-raise',             name: 'Knee / Leg Raise',        day: 'abs', mode: 'bodyweight', weight: 0, step: 0, target: 10, top: 12, floor: 6, primary: ['abs'], secondary: ['obliques'], levels: ['Lying knee raise', 'Lying leg raise', 'Hanging knee raise', 'Hanging leg raise'], demo: 0 },
+  { id: 'knee-crunch',           name: 'Knee Crunch',             day: 'abs', mode: 'bodyweight', weight: 0, step: 0, perSide: true, target: 12, top: 15, floor: 8, primary: ['abs'], secondary: ['obliques'], levels: ['Bodyweight', 'Slow 3-s tempo', 'Holding a light plate'], demo: 0 },
+  { id: 'standing-march',        name: 'Standing March',          day: 'abs', mode: 'bodyweight', weight: 0, step: 0, perSide: true, target: 15, top: 20, floor: 10, primary: ['abs'], secondary: ['obliques', 'quads'], levels: ['Bodyweight', 'Slow 3-s tempo', 'Holding a weight'], demo: 0 },
+  { id: 'mountain-climber',      name: 'Mountain Climber',        day: 'abs', mode: 'bodyweight', weight: 0, step: 0, perSide: true, target: 15, top: 20, floor: 10, primary: ['abs'], secondary: ['obliques', 'frontDelts', 'quads'], levels: ['Hands on a bench', 'Hands on the floor', 'Slow & controlled'], demo: 0 },
+  // From her first plan — no longer on any day, kept so their history stays viewable ("Earlier" in Progress)
   { id: 'step-up',               name: 'Step-Up into Knee Raise', day: 'glutes', mode: 'bodyweight', weight: 0, step: 2, perHand: true, perSide: true, compound: true, primary: ['glutes', 'quads'], secondary: ['hamstrings', 'abs', 'calves'], tip: 'hold a dumbbell in each hand or use a higher box', demo: 0 },
   { id: 'bulgarian-split-squat', name: 'Bulgarian Split Squat',   day: 'glutes', mode: 'bodyweight', weight: 0, step: 2, perHand: true, perSide: true, compound: true, primary: ['glutes', 'quads'], secondary: ['adductors', 'hamstrings'], alts: ['reverse-lunge'], tip: 'hold a dumbbell in each hand', demo: 4 },
   { id: 'reverse-lunge',         name: 'Reverse Lunge',           day: 'glutes', mode: 'bodyweight', weight: 0, step: 2, perHand: true, perSide: true, compound: true, primary: ['glutes', 'quads'], secondary: ['adductors', 'hamstrings'], alts: ['bulgarian-split-squat'], tip: 'hold a dumbbell in each hand', demo: 4 },
-  // Back & arms (+ chest and abs)
-  { id: 'lat-pulldown',          name: 'Lat Pulldown',            day: 'upper', weight: 0, step: 5, compound: true, primary: ['lats'],               secondary: ['biceps', 'upperBack', 'rearDelts'], demo: 30 },
-  { id: 'seated-row',            name: 'Seated Row',              day: 'upper', weight: 0, step: 5, compound: true, primary: ['lats', 'upperBack'],  secondary: ['biceps', 'rearDelts'], alts: ['t-bar-row'], demo: 30 },
-  { id: 't-bar-row',             name: 'T-Bar Row',               day: 'upper', weight: 0, step: 5, compound: true, primary: ['upperBack', 'lats'],  secondary: ['biceps', 'rearDelts', 'lowerBack'], alts: ['seated-row'], demo: 20 },
-  { id: 'pull-up',               name: 'Pull-Up',                 day: 'upper', mode: 'assisted', weight: 0, step: 5, compound: true, target: 8, top: 10, floor: 5, primary: ['lats'], secondary: ['biceps', 'upperBack', 'forearms'], demo: 35 },
-  { id: 'push-up',               name: 'Push-Up',                 day: 'upper', mode: 'bodyweight', weight: 1, step: 0, compound: true, primary: ['chest', 'triceps'], secondary: ['frontDelts', 'abs'], levels: ['Incline (hands on bench)', 'On knees', 'Full push-up', 'Full, 3-s lowering', 'Feet raised'], demo: 1 },
-  { id: 'chest-press',           name: 'Chest Press',             day: 'upper', weight: 0, step: 5, compound: true, primary: ['chest'],              secondary: ['frontDelts', 'triceps'], demo: 20 },
-  { id: 'plank',                 name: 'Plank',                   day: 'upper', mode: 'timed', weight: 1, step: 0, target: 40, top: 60, floor: 20, primary: ['abs'], secondary: ['obliques', 'frontDelts', 'glutes'], levels: ['On knees', 'Full plank', 'With shoulder taps', 'Plate on back'], demo: 1 },
-  { id: 'knee-crunch',           name: 'Knee Crunch',             day: 'upper', mode: 'bodyweight', weight: 0, step: 0, target: 15, top: 20, floor: 10, primary: ['abs'], secondary: ['obliques'], levels: ['Bodyweight', 'Slow 3-s tempo', 'Holding a light plate'], demo: 0 },
-  { id: 'bug-crunch',            name: 'Weighted Bug Crunch',     day: 'upper', weight: 0, step: 1, target: 12, top: 15, floor: 8, primary: ['abs'], secondary: ['obliques'], demo: 4 },
-  // Legs
-  { id: 'leg-press',             name: 'Leg Press',               day: 'legs', weight: 0, step: 5, compound: true, primary: ['quads', 'glutes'], secondary: ['hamstrings', 'adductors'], demo: 60 },
-  { id: 'leg-curl',              name: 'Leg Curl',                day: 'legs', weight: 0, step: 5, primary: ['hamstrings'], secondary: ['calves'], demo: 25 },
-  { id: 'leg-extension',         name: 'Leg Extension',           day: 'legs', weight: 0, step: 5, primary: ['quads'],      secondary: [], demo: 25 },
+  { id: 't-bar-row',             name: 'T-Bar Row',               day: 'upper', weight: 0, step: 5, compound: true, primary: ['upperBack', 'lats'], secondary: ['biceps', 'rearDelts', 'lowerBack'], alts: ['seated-row'], demo: 20 },
+  { id: 'chest-press',           name: 'Chest Press',             day: 'upper', weight: 0, step: 5, compound: true, primary: ['chest'], secondary: ['frontDelts', 'triceps'], demo: 20 },
+  { id: 'bug-crunch',            name: 'Weighted Bug Crunch',     day: 'abs', weight: 0, step: 1, target: 12, top: 15, floor: 8, primary: ['abs'], secondary: ['obliques'], demo: 4 },
   { id: 'hip-adduction',         name: 'Hip Adduction',           day: 'legs', weight: 0, step: 5, target: 12, top: 15, floor: 10, primary: ['adductors'], secondary: [], alts: ['hip-abduction'], demo: 30 },
 ];
 
 /* Which exercises each day starts with. A trailing "?" = optional that day: left out of a fresh
-   session but offered as a one-tap "also available" chip (and as a swap partner). */
+   session but offered as a one-tap chip. Abs are all optional: she picks 2–3 each time
+   (a new abs session starts with whatever she picked last time). */
+const PLAN_VERSION = 2;   // 2 = her October 2026 plan
 const DEFAULT_PLANS = {
-  glutes: ['hip-thrust', 'hip-abduction', 'glute-kickback', 'step-up', 'bulgarian-split-squat', 'reverse-lunge?'],
-  upper:  ['lat-pulldown', 'seated-row', 't-bar-row?', 'pull-up', 'push-up', 'chest-press', 'plank', 'knee-crunch', 'bug-crunch'],
-  legs:   ['leg-press', 'leg-curl', 'leg-extension', 'hip-thrust', 'hip-adduction', 'hip-abduction?'],
-  full:   ['hip-thrust', 'leg-press', 'lat-pulldown', 'seated-row', 'chest-press', 'plank', 'glute-kickback?', 'push-up?'],
+  glutes: ['hip-thrust', 'hip-abduction', 'glute-kickback', 'rdl'],
+  upper:  ['lat-pulldown', 'seated-row', 'push-up', 'pull-up', 'face-pull'],
+  legs:   ['ffe-split-squat', 'leg-press', 'leg-curl', 'leg-extension'],
+  abs:    ['plank?', 'in-and-out?', 'leg-raise?', 'knee-crunch?', 'standing-march?', 'mountain-climber?'],
 };
+/* When an existing install upgrades to a new plan, these fields come from the new defaults;
+   her own weights, jump sizes, swaps and hidden flags are left alone. */
+const PRESCRIPTION_FIELDS = ['name', 'day', 'mode', 'sets', 'amrap', 'target', 'top', 'floor', 'perSide', 'perHand', 'levels', 'compound', 'primary', 'secondary'];
 
-const CARDIO_KINDS = ['Incline walk', 'StairMaster', 'Bike', 'Elliptical', 'Run', 'Rower', 'Other'];
+const CARDIO_KINDS = ['Treadmill', 'Elliptical', 'StairMaster', 'Run', 'Other'];
 
 const DEFAULT_SETTINGS = {
   units: 'kg',
@@ -817,8 +837,9 @@ const Engine = (() => {
     const last = valid[valid.length - 1];
     const workHit = work.every(s => s.r >= t.target);
     const workEasy = work.every(s => s.rir >= 3);
-    const finalHit = last.r >= top;
-    const hit = workHit && (finalHit || (workEasy && last.r >= t.target));
+    // "as many as possible" on every set: the bar is the top of the range on EVERY set
+    const finalHit = ex.amrap ? valid.every(s => s.r >= top) : last.r >= top;
+    const hit = ex.amrap ? finalHit : workHit && (finalHit || (workEasy && last.r >= t.target));
     const under = last.r < t.floor || work.some(s => s.r < t.floor);
     const best = Math.max(...valid.map(s => s.r));
     let score;
@@ -907,15 +928,17 @@ const Engine = (() => {
     const pct = ev.pct ? ` (≈${ev.pct.toFixed(ev.pct < 10 ? 1 : 0)}%)` : '';
     const tip = ex.tip ? ` Next level: ${ex.tip}.` : '';
     const low = ev.lowReadiness ? ' Energy looks low today, so repeating it once more is also fine.' : '';
+    // what "hitting the target" means for this exercise
+    const goal = ex.amrap ? `every set at ${top}+${unit}` : `${t}+${unit} on the working sets and ${top}+${unit} on the final set`;
     if (ex.levels) {
       const cur = levelName(ex, ev.w), nxt = levelName(ex, ev.next);
       if (ev.status === 'start') return { title: 'First time — pick your version', detail: `Use − / + to choose the version (now: ${cur}). Aim for ${t}${unit} on the first two sets with a little left in the tank, then go all out on the last.` };
       if (ev.status === 'increase') return ev.next > ev.w
-        ? { title: `Level up → ${nxt}`, detail: `Two sessions in a row you hit ${t}+${unit} and ${top}+${unit} on the final set at "${cur}". Switch to "${nxt}" — expect fewer ${word} at first, then build back.${low}` }
+        ? { title: `Level up → ${nxt}`, detail: `Two sessions in a row you hit ${goal} at "${cur}". Switch to "${nxt}" — expect fewer ${word} at first, then build back.${low}` }
         : { title: `Top version — keep adding ${word}`, detail: `You've reached the hardest version here. Keep pushing ${word} on the final set, or slow every rep down.` };
       if (ev.status === 'newload') return { title: 'New version — settle in', detail: `First session at "${cur}". Fewer ${word} are normal for a session or two; build back to ${t}${unit} and ${top}+${unit}.` };
       if (ev.status === 'reduce') return { title: `Step back → ${nxt}`, detail: `Two sessions in a row under ${floor}${unit} at "${cur}". The easier version keeps you in the ${floor}–${top}${unit} range so you can climb again.` };
-      if (ev.status === 'hold') return { title: `Stay on "${cur}" — chase ${word}`, detail: `You're in the productive zone. Push the final set toward ${top}+${unit}; two sessions there and you move up a version.` };
+      if (ev.status === 'hold') return { title: `Stay on "${cur}" — chase ${word}`, detail: `You're in the productive zone. Push ${ex.amrap ? 'every set' : 'the final set'} toward ${top}+${unit}; two sessions there and you move up a version.` };
       if (ev.status === 'caution') return { title: `Below the floor — stay on "${cur}"`, detail: `A set fell under ${floor}${unit}. Keep this version and focus on ${word}; if it happens again the app suggests an easier one.` };
       if (ev.status === 'plateau') return { title: `Plateau at "${cur}"`, detail: `No extra ${word} over the last few sessions. Take a lighter week, add a set, or check sleep and food — then push again.` };
     }
@@ -931,12 +954,12 @@ const Engine = (() => {
         if (m === 'assisted') return ev.next > 0
           ? { title: `Take ${step} ${u} off → ${fmtW(ev.next)} ${u} assist`, detail: `Two sessions in a row you hit ${t}+ reps and ${top}+ on the final set at ${fmtW(ev.w)} ${u} of assistance. Less help next time — reps will dip, then climb back.${low}` }
           : { title: 'Try it with no assistance!', detail: `Two sessions in a row at ${top}+ reps on the lightest assistance. Go for real pull-ups; if you only get a few, keep a little help on the later sets.` };
-        if (m === 'timed') return { title: 'Level up the hold', detail: `Two sessions in a row you held ${top}+ s on the final set. Aim about 10 s longer, or${tip ? ' ' + ex.tip : ' make it harder'}.` };
+        if (m === 'timed') return { title: 'Level up the hold', detail: `Two sessions in a row you held ${ex.amrap ? `${top}+ s on every set` : `${top}+ s on the final set`}. Aim about 10 s longer, or${tip ? ' ' + ex.tip : ' make it harder'}.` };
         if (m === 'bodyweight') return ev.step > 0
           ? { title: `Level up: add ${step} ${u}${ex.perHand ? ' per hand' : ''}`, detail: `Two sessions in a row you hit ${t}+ reps and ${top}+ on the final set at ${L(ev.w)}. Time to ${ex.tip || 'add a little load'}.${low}` }
-          : { title: 'Level up: harder version', detail: `Two sessions in a row you hit ${t}+ reps and ${top}+ on the final set.${tip}${low}` };
+          : { title: 'Level up: harder version', detail: `Two sessions in a row you hit ${goal}.${tip}${low}` };
         return { title: `Add ${step} ${u} → ${fmtW(ev.next)} ${u}${pct}`, detail: `Two sessions in a row you hit ${t}+ on the working sets and ${top}+ on the final set at ${fmtW(ev.w)} ${u}. That is the 2-for-2 rule — move up and rebuild your reps.${ev.bigStep ? ` Because ${step} ${u} is a big jump at this weight, the target was ${top} reps, not ${ev.top - 3}.` : ''}${low}` };
-      case 'almost': return { title: '1 of 2 — repeat this and you move up', detail: `Last session hit the targets (${t}+ ${word} on the working sets, ${top}+${unit} on the final set). Do it once more at ${L(ev.w)} and you level up.` };
+      case 'almost': return { title: '1 of 2 — repeat this and you move up', detail: `Last session hit the target (${goal}). Do it once more at ${L(ev.w)} and you level up.` };
       case 'hold': return { title: `Hold ${L(ev.w)} — chase ${word}`, detail: `You are in the productive zone (working sets ≥ ${floor}${unit}, final set under ${top}${unit}). Adding ${word} at the same load builds muscle just like adding weight; push the final set toward ${top}+${unit}.${ev.bigStep ? ` The machine's ${step} ${u} jump is big at this weight, so the bar is ${top} reps before moving up.` : ''}` };
       case 'newload':
         if (m === 'assisted') return { title: 'Less assistance — settle in', detail: `First session at ${fmtW(ev.w)} ${u} of help. Reps usually dip for a session or two; rebuild to ${t} and ${top}+ on the last set.` };
@@ -1036,6 +1059,7 @@ const Store = (() => {
       settings: { ...DEFAULT_SETTINGS },
       exercises: clone(DEFAULT_EXERCISES),
       plans: clone(DEFAULT_PLANS),
+      planVersion: PLAN_VERSION,
       bodyweight: {},
       workouts: {},
       tombstones: {},
@@ -1052,6 +1076,18 @@ const Store = (() => {
     d.exercises.forEach(e => { if (!have.has(e.id)) s.exercises.push(e); });
     s.exercises.forEach(e => { e.primary = e.primary || []; e.secondary = e.secondary || []; });
     s.plans = { ...d.plans, ...(s.plans || {}) };
+    // New plan from Crissy: swap in the new day line-ups once. Sessions, weigh-ins, weights and
+    // progress are untouched — only what each day starts with and each exercise's targets change.
+    if ((s.planVersion || 1) < PLAN_VERSION) {
+      s.plans = clone(DEFAULT_PLANS);
+      const byId = Object.fromEntries(d.exercises.map(e => [e.id, e]));
+      s.exercises.forEach(e => {
+        const def = byId[e.id]; if (!def) return;
+        PRESCRIPTION_FIELDS.forEach(k => { if (k in def) e[k] = clone(def[k]); else delete e[k]; });
+      });
+      s.planVersion = PLAN_VERSION;
+      s.metaUpdatedAt = Date.now();
+    }
     s.bodyweight = s.bodyweight || {};
     s.workouts = s.workouts || {};
     s.tombstones = s.tombstones || {};
@@ -1213,7 +1249,8 @@ const Store = (() => {
       const plan = dayPlan(type);
       const inPlan = new Set(plan.map(p => p.ex.id));
       // the default line-up, except that a default swapped for one of its alternatives last time keeps the swap
-      w.entries = plan.filter(({ ex, opt }) => {
+      if (DAY_TYPES[type].addon) w.entries = plan.filter(({ ex }) => usedLast.has(ex.id)).map(({ ex }) => newEntry(ex, id, date));
+      else w.entries = plan.filter(({ ex, opt }) => {
         const altsHere = (ex.alts || []).filter(a => inPlan.has(a));
         if (!opt) return !altsHere.some(a => usedLast.has(a) && !usedLast.has(ex.id));
         return altsHere.some(a => plan.find(p => p.ex.id === a && !p.opt)) && usedLast.has(ex.id);
@@ -1233,7 +1270,8 @@ const Store = (() => {
     let w = ev.status === 'increase' || ev.status === 'reduce' ? ev.next : (ev.sessions ? ev.w : ex.weight);
     if (ex.levels) w = Math.max(0, Math.min(ex.levels.length - 1, +w || 0));
     else if (!(w > 0)) w = '';
-    const sets = [0, 1, 2].map(i => ({ w, r: '', rir: i === 2 ? 0 : 2, done: false }));
+    const n = ex.sets || 3;
+    const sets = Array.from({ length: n }, (_, i) => ({ w, r: '', rir: ex.amrap || i === n - 1 ? 0 : 2, done: false }));
     return { ex: ex.id, sets, note: '' };
   }
 
@@ -1284,7 +1322,7 @@ const Store = (() => {
     const load = {}, fin = {}, hits = {}, hold = {};
     state.exercises.forEach(e => { load[e.id] = e.demo || 0; hits[e.id] = 0; hold[e.id] = 30; const t = Engine.exTargets(e, S); fin[e.id] = t.target + rnd(-1, 1); });
     const ids = [];
-    const cardioFor = () => ({ kind: ['Incline walk', 'StairMaster', 'Incline walk', 'Bike'][rnd(0, 3)], min: [15, 20, 20, 25][rnd(0, 3)], rpe: rnd(5, 7) });
+    const cardioFor = () => ({ kind: ['Treadmill', 'StairMaster', 'Elliptical', 'Run'][rnd(0, 3)], min: [15, 20, 20, 25][rnd(0, 3)], rpe: rnd(5, 7) });
     while (day < D.today()) {
       const dow = D.parse(day).getDay();
       if ([1, 3, 5].includes(dow)) {
@@ -1300,7 +1338,9 @@ const Store = (() => {
           }
           const wgt = load[e.id], f = fin[e.id];
           const second = f >= t.top ? t.target : t.target - rnd(0, 1);
-          w.entries.push({ ex: e.id, sets: [{ w: wgt, r: t.target, rir: 2, done: true }, { w: wgt, r: second, rir: rnd(1, 2), done: true }, { w: wgt, r: f, rir: 0, done: true }], note: '' });
+          const demoSets = [{ w: wgt, r: t.target, rir: 2, done: true }, { w: wgt, r: second, rir: rnd(1, 2), done: true }, { w: wgt, r: f, rir: 0, done: true }];
+          if (e.sets === 2) demoSets.splice(1, 1);
+          w.entries.push({ ex: e.id, sets: demoSets, note: '' });
           // the sample follows the same 2-for-2 rule the app applies
           hits[e.id] = (f >= t.top && second >= t.target) ? hits[e.id] + 1 : 0;
           if (hits[e.id] >= 2) {
@@ -1311,9 +1351,15 @@ const Store = (() => {
           } else fin[e.id] = Math.min(t.top + 3, f + (Math.random() < 0.75 ? 1 : 0));
         });
         state.workouts[id] = w; ids.push(id);
+        if (dow === 5 && Math.random() < 0.7) {   // an abs add-on after Friday's session
+          const aid = uid(); const picks = ['plank', 'leg-raise', 'mountain-climber'];
+          state.workouts[aid] = { id: aid, date: day, type: 'abs', status: 'done', demo: true, createdAt: D.now() + 1, updatedAt: D.now(), readiness: {}, sessionRPE: null, note: 'Sample abs', cardio: { kind: '', min: '', rpe: null }, stretch: { done: false, min: '' },
+            entries: picks.map(pid => { const e = exercise(pid); const t = Engine.exTargets(e, S); const base = Engine.modeOf(e) === 'timed' ? hold[pid] : t.target; return { ex: pid, note: '', sets: [0, 1, 2].map(j => ({ w: e.demo || 0, r: base - j * (Engine.modeOf(e) === 'timed' ? 5 : 1), rir: 0, done: true })) }; }) };
+          hold.plank = Math.min(75, hold.plank + 5); ids.push(aid);
+        }
       } else if (dow === 6 && Math.random() < 0.7) {
         const id = uid();
-        state.workouts[id] = { id, date: day, type: 'cardio', status: 'done', demo: true, createdAt: D.now(), updatedAt: D.now(), readiness: {}, sessionRPE: null, note: 'Sample cardio', cardio: { kind: 'Incline walk', min: rnd(30, 45), rpe: rnd(5, 7) }, stretch: { done: true, min: 15 } };
+        state.workouts[id] = { id, date: day, type: 'cardio', status: 'done', demo: true, createdAt: D.now(), updatedAt: D.now(), readiness: {}, sessionRPE: null, note: 'Sample cardio', cardio: { kind: 'Treadmill', min: rnd(30, 45), rpe: rnd(5, 7) }, stretch: { done: true, min: 15 } };
         ids.push(id);
       }
       day = D.add(day, 1);
@@ -1380,10 +1426,12 @@ const ICON = {
   upper: _svg('<path d="M3 3.5h18"/><path d="M7.5 3.5 9.5 9M16.5 3.5 14.5 9"/><circle cx="12" cy="9.5" r="2.2"/><path d="M12 11.7V17M9.2 21.5 12 17l2.8 4.5"/>'),
   legs: _svg('<path d="M8 3v8l-3 10M16 3v8l3 10M8 11h8"/>'),
   full: _svg('<circle cx="12" cy="4.5" r="2"/><path d="M5 9.5h14M12 9.5v5.5l-3.5 6M12 15l3.5 6"/>'),
+  abs: _svg('<rect x="7" y="3.5" width="10" height="17" rx="4"/><path d="M12 3.5v17M7 9.2h10M7 14.8h10"/>'),
   cardio: _svg('<path d="M20.4 5.6a5 5 0 0 0-7 0L12 7l-1.4-1.4a5 5 0 0 0-7 7L12 21l8.4-8.4a5 5 0 0 0 0-7z"/><path d="M4 12h3.5l1.8-2.8 2.7 5.4 1.8-2.6H20"/>', 2),
   scale: _svg('<rect x="3.5" y="4" width="17" height="16" rx="4"/><path d="M8 10a4 4 0 0 1 8 0"/><path d="m12 10 1.6-2.2"/>', 2),
 };
-const DAY_ICON = { glutes: ICON.glutes, upper: ICON.upper, legs: ICON.legs, full: ICON.full, cardio: ICON.cardio };
+const DAY_ICON = { glutes: ICON.glutes, upper: ICON.upper, legs: ICON.legs, abs: ICON.abs, full: ICON.full, cardio: ICON.cardio };
+const absThisWeek = () => { const wk = D.weekStart(D.today()); return Store.allWorkouts().filter(w => w.date >= wk && w.date <= D.add(wk, 6) && (w.type === 'abs' || (w.entries || []).some(en => Store.exercise(en.ex)?.day === 'abs' && (en.sets || []).some(s => +s.r > 0)))).map(w => w.date).filter((d, i, a) => a.indexOf(d) === i).length; };
 const STATUS_ICON = { increase: ICON.up, almost: ICON.flag, hold: ICON.hold, newload: ICON.star, caution: ICON.warn, reduce: ICON.down, plateau: ICON.pause, start: ICON.flag };
 const STATUS_LABEL = { increase: 'Level up', almost: '1 of 2', hold: 'Hold', newload: 'New load', caution: 'Caution', reduce: 'Ease off', plateau: 'Plateau', start: 'Start' };
 
@@ -1619,7 +1667,7 @@ function rpeDots(attr, value) {
 }
 function weekStats() {
   const S = Store.state; const wk = D.weekStart(D.today());
-  const lifts = Object.values(S.workouts).filter(w => w.date >= wk && DAY_TYPES[w.type].lifting).length;
+  const lifts = Object.values(S.workouts).filter(w => w.date >= wk && DAY_TYPES[w.type].lifting && !DAY_TYPES[w.type].addon).length;
   const cw = Engine.cardioWeeks(S.workouts, 1)[0];
   const series = Engine.bwSeries(S.bodyweight);
   const rate = Engine.bwRate(series, D.today());
@@ -1658,7 +1706,8 @@ function renderTrain() {
   const next = Store.suggestedType();
   html += `<div class="starters">` + ROTATION.map(k => { const t = DAY_TYPES[k]; const isNext = k === next && !ws.some(x => x.type === k);
     return `<button class="starter" data-type="${k}" data-act="start" data-typ="${k}"><span class="toprow">${isNext ? '<span class="next">Up next</span>' : ''}<span class="ic">${DAY_ICON[k]}</span></span><span class="t">${t.name}</span><span class="d">${t.desc}</span></button>`; }).join('') + `</div>`;
-  html += `<div class="cardio-row">` + ['full', 'cardio'].map(k => `<button class="starter mini" data-type="${k}" data-act="start" data-typ="${k}"><span class="ic">${DAY_ICON[k]}</span><span class="grow"><span class="t">${DAY_TYPES[k].name}</span><span class="d">${DAY_TYPES[k].desc}</span></span></button>`).join('') + `</div>`;
+  const absN = absThisWeek();
+  html += `<div class="cardio-row">` + ['abs', 'cardio'].map(k => `<button class="starter mini" data-type="${k}" data-act="start" data-typ="${k}"><span class="ic">${DAY_ICON[k]}</span><span class="grow"><span class="t">${DAY_TYPES[k].name}${k === 'abs' ? ` <span class="minicount">${absN}/2</span>` : ''}</span><span class="d">${k === 'abs' ? `1–2× a week · done ${absN}× this week` : DAY_TYPES[k].desc}</span></span></button>`).join('') + `</div>`;
   const last = Store.lastRotationType();
   if (last) html += `<p class="small muted" style="margin-top:10px">Rotation: after ${DAY_TYPES[last].name} comes <b style="color:var(--pink)">${DAY_TYPES[next].name}</b>. For an extra glute day, just tap Glutes again.</p>`;
 
@@ -1701,15 +1750,21 @@ function renderWorkout(w) {
   });
   html += `</div></div>`;
   if (t.lifting) {
-    html += `<div class="section"><h2>Exercises</h2><span class="hint">sets 1–2: ~${S.settings.targetReps} reps, 1–3 in reserve · last set: all out</span></div><div class="stack" id="exStack">`;
+    const isAbs = !!t.addon;
+    html += `<div class="section"><h2>Exercises</h2><span class="hint">${isAbs ? '3 sets each · slow down or add weight once easy' : `sets 1–2: ~${S.settings.targetReps} reps, 1–3 in reserve · last set: all out`}</span></div><div class="stack" id="exStack">`;
     (w.entries || []).forEach((en, i) => { html += renderExerciseCard(w, en, i); });
+    if (isAbs && !(w.entries || []).length) html += `<div class="empty"><b>Pick 2–3 for today</b>Tap the moves below — 3 sets each.</div>`;
     html += `</div>`;
     const have = new Set((w.entries || []).map(e => e.ex));
+    const chips = list => list.map(e => `<button class="chip add" data-act="add-entry-main" data-ex="${e.id}">${ICON.plus}${esc(e.name)}</button>`).join('');
     const extras = Store.dayPlan(w.type).map(p => p.ex).filter(e => !have.has(e.id));
-    if (extras.length && w.status !== 'done') html += `<div class="also"><span class="tiny">Also on ${esc(t.name)} — tap to add</span><div class="pillrow">${extras.map(e => `<button class="chip add" data-act="add-entry-main" data-ex="${e.id}">${ICON.plus}${esc(e.name)}</button>`).join('')}</div></div>`;
+    if (extras.length && w.status !== 'done') html += `<div class="also"><span class="tiny">${isAbs ? 'Ab moves — pick 2–3' : `Also on ${esc(t.name)} — tap to add`}</span><div class="pillrow">${chips(extras)}</div></div>`;
+    // abs can ride along with any lifting day
+    const absExtras = isAbs ? [] : Store.dayPlan('abs').map(p => p.ex).filter(e => !have.has(e.id));
+    if (absExtras.length && w.status !== 'done') html += `<div class="also absadd"><span class="tiny">Add abs today? (1–2× a week · ${absThisWeek()} so far)</span><div class="pillrow">${chips(absExtras)}</div></div>`;
     html += `<div class="row" style="margin-top:10px"><button class="btn ghost block" data-act="add-exercise">${ICON.plus} Add an exercise from another day</button></div>`;
   }
-  html += renderCardio(w);
+  if (!t.addon) html += renderCardio(w);
   html += `<div class="section"><h2>Session</h2></div><div class="card stack">
     <div><div class="tiny" style="margin-bottom:6px">Whole-session effort (RPE 1–10)</div>${rpeDots('data-srpe="1"', w.sessionRPE)}</div>
     <div class="field"><label for="wnote">Notes</label><textarea class="input" id="wnote" data-wfield="note" placeholder="Anything worth remembering — sleep, form cues, how the new weight felt…">${esc(w.note || '')}</textarea></div>
@@ -1776,7 +1831,7 @@ function renderExerciseCard(w, en, i) {
       ? `<button class="holdbtn" data-act="hold" aria-label="Time set ${si2 + 1}">${ICON.play}<span>Time</span></button>`
       : `<div class="stepper"><button data-step="w" data-n="-1" aria-label="Less">−</button><input type="number" inputmode="decimal" step="0.5" min="0" value="${s.w === '' || s.w == null ? '' : s.w}" placeholder="${wPh}" data-f="w" aria-label="${hw} set ${si2 + 1}"><button data-step="w" data-n="1" aria-label="More">+</button></div>`;
     html += `<div class="set${s.done ? ' isdone' : ''}${noW ? ' wide' : ''}" data-s="${si2}">
-      <div class="n">${si2 + 1}${isLast ? '<small>All out</small>' : ''}</div>
+      <div class="n">${si2 + 1}${ex.amrap ? '<small>Max</small>' : isLast ? '<small>All out</small>' : ''}</div>
       ${wCell}
       <div class="stepper"><button data-step="r" data-n="-1" aria-label="Fewer">−</button><input type="number" inputmode="numeric" step="1" min="0" value="${s.r === '' || s.r == null ? '' : s.r}" placeholder="${ph}" data-f="r" aria-label="${hr} set ${si2 + 1}"><button data-step="r" data-n="1" aria-label="More">+</button></div>
       <button class="done${s.done ? ' on' : ''}" data-act="set-done" aria-label="Set ${si2 + 1} done" aria-pressed="${!!s.done}">${ICON.check}</button>
@@ -1797,8 +1852,10 @@ function liveLine(ex, en, settings) {
   // same "big jump" rule as the advice: light machine loads need 3 extra reps before moving up
   if (m === 'load' && st.w > 0 && t.step / st.w > 0.12) st = Engine.sessionStats(ex, en.sets, settings, t.top + 3);
   const si = Engine.scoreInfo(ex, settings.units);
-  const parts = [`Working ${st.workHit ? '✓' : '·'} ${st.work.map(s => s.r).join('/')}${unit} vs ${t.target}${unit}`];
-  if (st.n > 1) parts.push(`final ${st.finalHit ? '✓' : '·'} ${st.last.r}${unit} vs ${st.top}${unit}`);
+  const parts = ex.amrap
+    ? [`Every set ${st.finalHit ? '✓' : '·'} ${st.sets.map(s => s.r).join('/')}${unit} vs ${st.top}${unit}`]
+    : [`Working ${st.workHit ? '✓' : '·'} ${st.work.map(s => s.r).join('/')}${unit} vs ${t.target}${unit}`];
+  if (st.n > 1 && !ex.amrap) parts.push(`final ${st.finalHit ? '✓' : '·'} ${st.last.r}${unit} vs ${st.top}${unit}`);
   parts.push(`${si.short} ${si.fmt(st.score)}`);
   const verdict = st.hit ? '<b style="color:var(--ok)">counts toward the 2-for-2</b>' : st.under ? '<b style="color:var(--warn)">under the floor</b>' : 'in the zone — keep going';
   return parts.join(' · ') + ' → ' + verdict;
@@ -1841,9 +1898,9 @@ function renderCalendar() {
     const k = `${y}-${D.pad(m + 1)}-${D.pad(d)}`; const ws = byDate[k] || [];
     html += `<button class="day${k === today ? ' today' : ''}${k === UI.calSel ? ' sel' : ''}${k > today ? ' future' : ''}" data-act="cal-sel" data-date="${k}" aria-label="${D.fmt(k)}${ws.length ? ', ' + ws.map(w => DAY_TYPES[w.type].name).join(' and ') : ''}"><span class="d">${d}</span><span class="marks">${ws.map(w => `<span class="mk${w.demo ? ' demo' : ''}" data-type="${w.type}">${DAY_TYPES[w.type].letter}</span>`).join('')}</span></button>`;
   }
-  html += `</div><div class="legend">` + Object.entries(DAY_TYPES).map(([k, t]) => `<span data-type="${k}"><i></i>${t.name} (${t.letter})</span>`).join('') + `</div>`;
+  html += `</div><div class="legend">` + Object.entries(DAY_TYPES).filter(([k, t]) => !t.retired || Store.allWorkouts().some(w => w.type === k)).map(([k, t]) => `<span data-type="${k}"><i></i>${t.name} (${t.letter})</span>`).join('') + `</div>`;
   const monthWs = Store.allWorkouts().filter(w => w.date.startsWith(`${y}-${D.pad(m + 1)}`));
-  const lifts = monthWs.filter(w => DAY_TYPES[w.type].lifting).length;
+  const lifts = monthWs.filter(w => DAY_TYPES[w.type].lifting && !DAY_TYPES[w.type].addon).length;
   const cMin = monthWs.reduce((a, w) => a + (+(w.cardio && w.cardio.min) || 0), 0);
   html += `<div class="stat-tiles" style="margin-top:12px"><div class="tile"><div class="v">${monthWs.length}</div><div class="l">Sessions</div></div><div class="tile"><div class="v">${lifts}</div><div class="l">Lift days</div></div><div class="tile"><div class="v">${cMin}</div><div class="l">Cardio min</div></div></div>`;
   const sel = UI.calSel; const ws = byDate[sel] || [];
@@ -1876,21 +1933,23 @@ function dayWorkoutCard(w) {
 }
 
 /* ---------------- progress ---------------- */
-const PROGRESS_GROUPS = [...ROTATION, 'cardio', 'weight'];
-const GROUP_NAME = g => g === 'weight' ? 'Weigh-ins' : DAY_TYPES[g].name;
+const GROUP_NAME = g => g === 'weight' ? 'Weigh-ins' : g === 'past' ? 'Earlier' : DAY_TYPES[g].name;
+/* exercises from earlier plans that are on no day now but have history — kept viewable */
+const pastExercises = () => Store.state.exercises.filter(e => !Object.keys(Store.daysOf(e.id)).length && Store.history(e.id).length);
+const progressGroups = () => [...ROTATION, 'abs', 'cardio', 'weight', ...(pastExercises().length ? ['past'] : [])];
 function renderProgress() {
   const S = Store.state; const u = S.settings.units;
   const exs = S.exercises.filter(e => !e.hidden);
   if (!UI.progressDay) UI.progressDay = 'glutes';
   const ready = [];
-  exs.forEach(ex => { const ev = Engine.evaluate(ex, Store.history(ex.id), S.settings); if (['increase', 'almost', 'reduce', 'plateau'].includes(ev.status)) ready.push({ ex, ev }); });
+  exs.filter(ex => Object.keys(Store.daysOf(ex.id)).length).forEach(ex => { const ev = Engine.evaluate(ex, Store.history(ex.id), S.settings); if (['increase', 'almost', 'reduce', 'plateau'].includes(ev.status)) ready.push({ ex, ev }); });
   let html = '';
   if (ready.length) html += `<div class="section"><h2>Next session</h2><span class="hint">${ready.length} exercise${ready.length > 1 ? 's' : ''} to act on</span></div><div class="readylist">` + ready.map(({ ex, ev }) => `<button class="readyitem" data-act="pick-ex" data-ex="${ex.id}" data-type="${ex.day}"><span class="sw"></span><div><div class="n">${esc(ex.name)}</div><div class="s">${esc(Engine.describe(ev, u).title)}</div></div><span class="badge ${ev.status}">${STATUS_LABEL[ev.status]}</span></button>`).join('') + `</div>`;
   const g = UI.progressDay;
-  html += `<div class="section"><h2>Progress</h2></div><div class="seg daypick">` + PROGRESS_GROUPS.map(k => `<button class="${g === k ? 'on' : ''}" data-act="pick-day" data-day="${k}" data-type="${k === 'weight' ? 'weight' : k}">${GROUP_NAME(k)}</button>`).join('') + `</div>`;
+  html += `<div class="section"><h2>Progress</h2></div><div class="seg daypick">` + progressGroups().map(k => `<button class="${g === k ? 'on' : ''}" data-act="pick-day" data-day="${k}" data-type="${k === 'weight' ? 'weight' : k}">${GROUP_NAME(k)}</button>`).join('') + `</div>`;
   if (g === 'cardio') return html + progressCardio();
   if (g === 'weight') return html + progressWeight();
-  const dayExs = Store.dayPlan(g).map(p => p.ex);
+  const dayExs = g === 'past' ? pastExercises() : Store.dayPlan(g).map(p => p.ex);
   if (!dayExs.some(e => e.id === UI.progressEx)) UI.progressEx = dayExs[0]?.id;
   html += `<div class="pillrow expick">` + dayExs.map(e => `<button class="chip pick${UI.progressEx === e.id ? ' on' : ''}" data-act="pick-ex" data-ex="${e.id}" data-type="${g}">${esc(e.name)}</button>`).join('') + `</div>`;
   return html + (UI.progressEx ? progressExercise(UI.progressEx) : '');
@@ -2026,10 +2085,11 @@ function renderGuide() {
   <article><h3>Push-ups, pull-ups and planks</h3>
   <p>Same 2-for-2 idea, a different way to go up. ${R('PLOT22')}</p>
   <ul>
-    <li><strong>Push-ups and knee crunches:</strong> build reps first, then move up a <em>version</em> (for push-ups: incline → knees → full → slow lowering → feet raised). Pick the version with − / + on the card; the app treats each step like a weight increase.</li>
-    <li><strong>Split squats and step-ups:</strong> build reps with bodyweight, then hold dumbbells, logged in the <em>+kg</em> column.</li>
+    <li><strong>Push-ups:</strong> every set is "as many as possible". Once <em>every</em> set reaches 12, two sessions in a row, the app moves you up a <em>version</em> (incline → knees → full → slow lowering → feet raised). Pick the version with − / + on the card; each step counts like a weight increase.</li>
+    <li><strong>Ab moves:</strong> same idea. Each has versions that slow the reps down or add weight, as in your plan, and the app tells you when to move up.</li>
+    <li><strong>Front-foot-elevated split squats:</strong> build reps with bodyweight, then hold dumbbells, logged in the <em>+kg</em> column.</li>
     <li><strong>Pull-ups on the assisted machine:</strong> the number is how much <em>help</em> you get, so going <strong>down</strong> is progress. The app tells you when to take ${fmtW(Store.exercise('pull-up')?.step || 5)} kg of assistance off, and cheers when you can go without.</li>
-    <li><strong>Plank:</strong> tap ▶ Time on a set and Stop when you drop. Once you hold 60 s on the last set two sessions in a row, the app moves you to the next version (knees → full → shoulder taps → plate).</li>
+    <li><strong>Plank:</strong> tap ▶ Time on a set and Stop when you drop. Once every hold reaches 60 s, two sessions in a row, the app moves you to the next version (knees → full → shoulder taps → plate).</li>
   </ul></article>
 
   <article><h3>Logging how it felt: RIR</h3>
@@ -2052,7 +2112,8 @@ function renderGuide() {
   </article>
 
   <article><h3>Building your glutes</h3>
-  <p>Hip thrusts and squat-pattern moves such as split squats grew the glutes by similar amounts in a 2023 trial, so your glute day's mix of both is well founded. ${R('PLOT23')} Hitting a muscle at least twice a week and doing about <strong>10+ hard sets a week</strong> are linked with more growth. ${R('SCHO16F,SCHO17V,IVER21')} Your plan works glutes on glute day <em>and</em> leg day (hip thrust, leg press), and the Body tab counts the sets for you.</p>
+  <p>Hip thrusts and squat-pattern moves such as split squats grew the glutes by similar amounts in a 2023 trial, so hip thrusts on glute day plus split squats on leg day is a well-founded mix. ${R('PLOT23')} Hitting a muscle at least twice a week and doing about <strong>10+ hard sets a week</strong> are linked with more growth. ${R('SCHO16F,SCHO17V,IVER21')} Your plan works glutes on glute day (thrusts, abduction, kickbacks, RDLs) <em>and</em> leg day (split squats, leg press), and the Body tab counts the sets for you.</p>
+  <p><strong>Abs, 1–2× a week:</strong> start an Abs session on its own, or add ab moves from the bottom of any lifting session. Pick 2–3 moves, 3 sets each. The Abs button shows how many times you've done them this week.</p>
   </article>
 
   <article><h3>Losing fat without losing muscle</h3>
@@ -2105,7 +2166,7 @@ function settingsHTML() {
     <div class="setrow"><div class="l">Cardio goal<small>minutes per week</small></div><input class="input" style="width:90px" type="number" inputmode="numeric" min="30" max="600" step="10" data-set="cardioGoal" value="${t.cardioGoal}"></div>
   </div>
   <div class="section"><h2>Exercises</h2><button class="btn sm" data-act="ex-new">${ICON.plus} New</button></div><div class="exsettings">` +
-    ROTATION.map(d => S.exercises.filter(e => e.day === d).map(e => { const days = Store.daysOf(e.id); const on = PLAN_DAYS.filter(k => days[k]).map(k => DAY_TYPES[k].name + (days[k] === 'opt' ? ' (optional)' : '')).join(', ');
+    [...ROTATION, 'abs'].map(d => S.exercises.filter(e => e.day === d).map(e => { const days = Store.daysOf(e.id); const on = PLAN_DAYS.filter(k => days[k]).map(k => DAY_TYPES[k].name + (days[k] === 'opt' ? ' (optional)' : '')).join(', ');
       return `<button class="exs" data-act="ex-edit" data-ex="${e.id}" style="${e.hidden ? 'opacity:.5' : ''}"><div><div class="n">${esc(e.name)}${e.hidden ? ' (hidden)' : ''}</div><div class="s">${on || 'Not on any day'} · ${Engine.modeOf(e) === 'load' ? (e.weight ? fmtW(e.weight) + ' ' + u : 'weight not set') : MODE_NAME[Engine.modeOf(e)].split(' (')[0]} · +${fmtW(e.step)} ${u} steps</div></div>${ICON.chevR}</button>`; }).join('')).join('') + `</div>
   <div class="section"><h2>Backup</h2></div><div class="card stack">
     <p class="small muted">Copy a backup into Notes every couple of weeks. Paste it back here on any phone to restore — sessions merge, nothing doubles up.</p>
@@ -2126,7 +2187,7 @@ function exerciseEditHTML(ex) {
   <div class="exedit" data-exid="${esc(ex.id)}">
     <div class="field wide"><label for="efName">Name</label><input class="input" id="efName" data-ef="name" value="${esc(ex.name)}" placeholder="e.g. Cable Pull-Through"></div>
     <div class="field"><label for="efMode">Type</label><select class="input" id="efMode" data-ef="mode">${Object.entries(MODE_NAME).map(([k, v]) => `<option value="${k}" ${m === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
-    <div class="field"><label for="efDay">Colour group</label><select class="input" id="efDay" data-ef="day">${ROTATION.map(d => `<option value="${d}" ${ex.day === d ? 'selected' : ''}>${DAY_TYPES[d].name}</option>`).join('')}</select></div>
+    <div class="field"><label for="efDay">Colour group</label><select class="input" id="efDay" data-ef="day">${[...ROTATION, 'abs'].map(d => `<option value="${d}" ${ex.day === d ? 'selected' : ''}>${DAY_TYPES[d].name}</option>`).join('')}</select></div>
     <div class="field wide"><label>Days — tap once to include, twice for optional</label><div class="mpick" data-days>${PLAN_DAYS.map(d => `<button data-dayp="${d}" class="${days[d] === 'on' ? 'p' : days[d] === 'opt' ? 's' : ''}">${DAY_TYPES[d].name}</button>`).join('')}</div></div>
     ${ex.levels ? `<div class="field"><label for="efW">Current version</label><select class="input" id="efW" data-ef="weight">${ex.levels.map((l, i) => `<option value="${i}" ${Math.round(ex.weight || 0) === i ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>`
       : `<div class="field"><label for="efW">${m === 'assisted' ? 'Current assistance' : m === 'load' ? 'Current weight' : 'Added weight'} (${u})</label><input class="input" id="efW" type="number" inputmode="decimal" step="0.5" data-ef="weight" value="${ex.weight || ''}" placeholder="0"></div>`}
@@ -2281,7 +2342,7 @@ function bindEvents() {
         Store.save({ workouts: [w.id] }); updateLive(+card.dataset.entry); return;
       }
       case 'rir': { const setEl = act.closest('.setrir'), card = act.closest('.ex'); const s = w.entries[+card.dataset.entry].sets[+setEl.dataset.s]; s.rir = +act.dataset.v; $$('button', setEl).forEach(b => b.classList.toggle('on', +b.dataset.v === s.rir)); Store.save({ workouts: [w.id] }); updateLive(+card.dataset.entry); return; }
-      case 'add-set': { const card = act.closest('.ex'); const en = w.entries[+card.dataset.entry]; const last = en.sets[en.sets.length - 1]; en.sets.push({ w: last ? last.w : '', r: '', rir: 0, done: false }); if (last && last.rir === 0) last.rir = 2; Store.save({ workouts: [w.id] }); return rerenderCard(+card.dataset.entry); }
+      case 'add-set': { const card = act.closest('.ex'); const en = w.entries[+card.dataset.entry]; const last = en.sets[en.sets.length - 1]; const amrap = Store.exercise(en.ex)?.amrap; en.sets.push({ w: last ? last.w : '', r: '', rir: 0, done: false }); if (!amrap && last && last.rir === 0) last.rir = 2; Store.save({ workouts: [w.id] }); return rerenderCard(+card.dataset.entry); }
       case 'remove-set': { const card = act.closest('.ex'); const en = w.entries[+card.dataset.entry]; if (en.sets.length > 1) en.sets.pop(); Store.save({ workouts: [w.id] }); return rerenderCard(+card.dataset.entry); }
       case 'toggle-note': { const card = act.closest('.ex'); const en = w.entries[+card.dataset.entry]; en._noteOpen = !en._noteOpen; const box = $('.exnote', card); box.classList.toggle('hidden', !(en._noteOpen || en.note)); if (!box.classList.contains('hidden')) $('input', box).focus(); return; }
       case 'swap': {
@@ -2313,7 +2374,9 @@ function bindEvents() {
       case 'cal-shift': { let { y, m } = UI.cal; m += +act.dataset.n; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } UI.cal = { y, m }; return render(true); }
       case 'cal-today': { const d = D.parse(D.today()); UI.cal = { y: d.getFullYear(), m: d.getMonth() }; UI.calSel = D.today(); return render(true); }
       case 'cal-sel': UI.calSel = act.dataset.date; return render(true);
-      case 'pick-ex': { const ex = Store.exercise(act.dataset.ex); UI.progressEx = act.dataset.ex; if (ex && !Store.dayPlan(UI.progressDay).some(p => p.ex.id === ex.id)) UI.progressDay = ex.day; return render(true); }
+      case 'pick-ex': { const ex = Store.exercise(act.dataset.ex); UI.progressEx = act.dataset.ex;
+        if (ex && UI.progressDay !== 'past' && !Store.dayPlan(UI.progressDay).some(p => p.ex.id === ex.id)) { const on = Object.keys(Store.daysOf(ex.id)); UI.progressDay = on.includes(ex.day) ? ex.day : on[0] || 'past'; }
+        return render(true); }
       case 'pick-day': UI.progressDay = act.dataset.day; UI.progressEx = null; return render(true);
       case 'body-week': UI.bodyWeek = Math.min(0, UI.bodyWeek + +act.dataset.n); return render(true);
       case 'muscle-sel': UI.bodySel = UI.bodySel === act.dataset.m ? null : act.dataset.m; return render(true);
@@ -2420,6 +2483,5 @@ function showMuscles(id) {
 })();
 
 </script>
-<script>if ('serviceWorker' in navigator && window.isSecureContext && location.protocol !== 'file:') window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </body>
 </html>

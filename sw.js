@@ -1,6 +1,6 @@
 /* Crissy Lifts offline cache. The page is fetched network-first so updates arrive on the next
    open with signal; everything falls back to the cache at the gym with no signal. */
-const CACHE = 'crissy-lifts-10da933ca6';
+const CACHE = 'crissy-lifts-7d64636981';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
